@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tzy.Jblog.dao.DoubfulPointDao">
+     <resultMap id="couponHistoryDetailMap" type="cn.tzy.Jblog.model.DoubfulPoint">
+        <result column="user_id" property="userId"/>
+        <result column="proj_id" property="projId"/>
+        <result column="proj_name" property="projName"/>
+        <result column="implcount" property="implCount"/>
+       <association property="levels"  resultMap="level"></association>
+    </resultMap>
+
+    <resultMap id="level" type="cn.tzy.Jblog.model.Level" >
+        <result column="doub_level" property="doubLevel"/>
+        <result column="levelcount" property="levelCount"/>
+    </resultMap>
+
+    <select id="selectByIdAndStatus" resultMap="couponHistoryDetailMap" >
+    SELECT t2.user_id ,t2.proj_id , t2.proj_name ,t2.implcount ,
+    t1.doub_level as doub_level,t1.levelcount as levelcount  FROM (
+    SELECT user_id,proj_id,  doub_level, count(*) as levelcount	FROM doubfulpoint where user_id = '9527' and is_impl = '0' group by doub_level,proj_id ) t1
+    ,
+    (SELECT user_id, proj_id , proj_name, count(*) as implcount	FROM doubfulpoint  where user_id = '9527' and is_impl = '0' GROUP BY proj_id,proj_name ) t2 where t1.user_id = t2.user_id and t1.proj_id = t2.proj_id
+    </select>
+
+</mapper>
